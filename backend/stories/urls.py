@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register(r'stories', views.StoryViewSet, basename='story')
+router.register(r'', views.StoryViewSet, basename='story')
 
 urlpatterns = [
     # Custom data loading endpoint
