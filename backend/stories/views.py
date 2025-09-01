@@ -1,8 +1,12 @@
+import os
+import json
+from pathlib import Path
 from rest_framework import viewsets, filters
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
-from .models import Story
+from .models import Story, StoryAnalysis, AuthorshipDetection
 from .serializers import StorySerializer
 
 class StoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -13,7 +17,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title', 'story']  # Use 'story' field instead of 'content'
+    search_fields = ['title', 'story']
     ordering_fields = ['created_at', 'title']
     ordering = ['-created_at']
 
@@ -222,3 +226,53 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
             
         except Exception as e:
             return Response({'error': str(e)}, status=500)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def load_stories_data(request):
+    """
+    Temporary endpoint to load initial story data from JSON files.
+    This view should be removed after the data is loaded.
+    """
+    # Base directory is the backend folder itself
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    
+    # Paths to your JSON files, now correctly pointing to the backend directory.
+    json_files_to_load = [
+        ('ai_stories.json', 'AI'),
+        ('human_stories.json', 'Human')
+    ]
+
+    try:
+        # Load stories from both JSON files
+        for filename, source_name in json_files_to_load:
+            json_file_path = os.path.join(BASE_DIR, filename)
+            with open(json_file_path, 'r', encoding='utf-8') as file:
+                stories_data = json.load(file)
+
+            for story_data in stories_data:
+                Story.objects.get_or_create(
+                    title=story_data.get('title'),
+                    defaults={
+                        # Corrected: Use 'story' to match your models.py
+                        'story': story_data.get('story'),
+                        # Corrected: Directly save the age group name from the JSON
+                        'age_group': story_data.get('age_group'),
+                        'morals': story_data.get('morals', []),
+                        'themes': story_data.get('themes', []),
+                        'keywords': story_data.get('keywords', []),
+                        'difficulty_level': story_data.get('difficulty_level', ''),
+                        'source': source_name,
+                        'safety_violations': story_data.get('safety_violations', {}),
+                        'stereotypes_biases': story_data.get('stereotypes_biases', {})
+                    }
+                )
+        
+        return Response({"status": "success", "message": "All stories loaded successfully!"})
+
+    except FileNotFoundError:
+        return Response({"status": "error", "message": "JSON files not found. Please ensure they are in the correct directory."}, status=404)
+    except json.JSONDecodeError:
+        return Response({"status": "error", "message": "Error decoding JSON file. Check file format."}, status=500)
+    except Exception as e:
+        return Response({"status": "error", "message": str(e)}, status=500)
