@@ -255,7 +255,7 @@ def load_stories_data(request):
                 stories_data = json.load(file)
 
             for story_data in stories_data:
-                Story.objects.get_or_create(
+                story, created = Story.objects.get_or_create(
                     title=story_data.get('title'),
                     defaults={
                         # Corrected: Use 'story' to match your models.py
