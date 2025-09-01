@@ -8,6 +8,8 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const backendUrl = 'https://beyond-words-backend-um97.onrender.com';
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,7 +25,7 @@ const SignIn = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/signin/', {
+      const response = await fetch(`${backendUrl}/api/auth/signin/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
