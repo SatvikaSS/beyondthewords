@@ -14,7 +14,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import './App.css';
 
 // Mock API Base URL - replace with your actual URL
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = 'https://beyond-words-backend-um97.onrender.com/api';
 
 // Enhanced API Functions with better error handling and auth headers
 const apiCall = async (endpoint, options = {}) => {
