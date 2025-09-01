@@ -85,6 +85,7 @@ else:
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://beyond-words-frontend.onrender.com",
     # Add your Vercel domain here after deployment:
     # "https://your-project-name.vercel.app",
 ]
