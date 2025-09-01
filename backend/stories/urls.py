@@ -7,4 +7,5 @@ router.register(r'', views.StoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('load-stories/', views.load_stories_data, name='load_stories_data'),
 ]
