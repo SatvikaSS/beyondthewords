@@ -90,7 +90,6 @@ urlpatterns = [
     path('api/analysis/', include('analysis.urls')),
     path('api/auth/', include('authentication.urls')),
     path('api/hero-video/', get_hero_video, name='hero-video'),
-    path('create-admin/', create_temp_admin, name='create_admin'),  # TEMPORARY - REMOVE AFTER USE
 ]
 
 # Serve media files during development
