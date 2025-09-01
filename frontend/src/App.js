@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Mail, Phone, X } from 'lucide-react';
-import qrCodeImage from './assets/images/QR CODE.png';
+import qrCodeImage from './assets/images/YAk6cT_qrcode.png';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import AboutUs from './components/AboutUs';
