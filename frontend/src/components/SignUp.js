@@ -13,6 +13,8 @@ const SignUp = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const backendUrl = 'https://beyond-words-backend-um97.onrender.com';
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -29,8 +31,9 @@ const SignUp = () => {
     console.log('Sending signup data:', formData);
 
     try {
-      console.log('Making request to:', '/api/auth/signup/');
-      const response = await fetch('/api/auth/signup/', {
+      console.log('Making request to:', `${backendUrl}/api/auth/signup/`);
+      // CORRECTED: Use the full backend URL for the fetch request
+      const response = await fetch(`${backendUrl}/api/auth/signup/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
