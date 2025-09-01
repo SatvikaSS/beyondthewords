@@ -503,8 +503,7 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
           controls={false}  
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="https://beyond-words-backend-um97.onrender.com/static/hero_video.mp4" type="video/mp4" />
-          <source src="https://beyond-words-backend-um97.onrender.com/static/hero_video.webm" type="video/webm" />
+          <source src="/static/hero_video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         
