@@ -244,9 +244,13 @@ def load_stories_data(request):
     ]
 
     try:
+        loaded_count = 0
         # Load stories from both JSON files
         for filename, source_name in json_files_to_load:
             json_file_path = os.path.join(BASE_DIR, filename)
+            if not os.path.exists(json_file_path):
+                continue
+                
             with open(json_file_path, 'r', encoding='utf-8') as file:
                 stories_data = json.load(file)
 
@@ -256,19 +260,21 @@ def load_stories_data(request):
                     defaults={
                         # Corrected: Use 'story' to match your models.py
                         'story': story_data.get('story'),
-                        # Corrected: Directly save the age group name from the JSON
                         'age_group': story_data.get('age_group'),
-                        'morals': story_data.get('morals', []),
-                        'themes': story_data.get('themes', []),
-                        'keywords': story_data.get('keywords', []),
-                        'difficulty_level': story_data.get('difficulty_level', ''),
                         'source': source_name,
                         'safety_violations': story_data.get('safety_violations', {}),
                         'stereotypes_biases': story_data.get('stereotypes_biases', {})
                     }
                 )
+                if created:
+                    loaded_count += 1
+
+        return Response({
+            "status": "success", 
+            "message": f"Loaded {loaded_count} new stories successfully!",
+            "total_stories": Story.objects.count()
+        })
         
-        return Response({"status": "success", "message": "All stories loaded successfully!"})
 
     except FileNotFoundError:
         return Response({"status": "error", "message": "JSON files not found. Please ensure they are in the correct directory."}, status=404)
