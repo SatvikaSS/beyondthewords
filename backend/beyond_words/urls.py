@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
@@ -24,14 +25,14 @@ def api_root(request):
             },
             'analysis': '/api/analysis/',
             'auth': '/api/auth/',
-            'hero_video': '/api/hero-video/',  # Added this line
+            'hero_video': '/api/hero-video/',
             'admin': '/admin/'
         },
         'documentation': 'Visit /admin/ for admin interface'
     })
 
 @api_view(['GET'])
-@permission_classes([AllowAny])  # Allow access without authentication
+@permission_classes([AllowAny])
 def get_hero_video(request):
     """Return the hero video URL"""
     video_path = os.path.join(settings.MEDIA_ROOT, 'hero-video.mp4')
@@ -54,13 +55,42 @@ def get_hero_video(request):
         'message': 'Hero video data retrieved successfully' if len(videos) > 0 else 'No hero video found'
     })
 
+# TEMPORARY FUNCTION - REMOVE AFTER CREATING ADMIN
+def create_temp_admin(request):
+    User = get_user_model()
+    if not User.objects.filter(username='admin').exists():
+        try:
+            User.objects.create_superuser(
+                username='admin',
+                email='admin@beyondwords.com', 
+                password='BeyondWords2024!'
+            )
+            return JsonResponse({
+                'status': 'SUCCESS: Admin user created!',
+                'username': 'admin',
+                'password': 'BeyondWords2024!',
+                'next_steps': [
+                    '1. Go to /admin/ and login with these credentials',
+                    '2. Change the password immediately',
+                    '3. Remove the create-admin URL from urls.py',
+                    '4. Add some Story objects to test your API'
+                ]
+            })
+        except Exception as e:
+            return JsonResponse({'error': f'Failed to create admin: {str(e)}'})
+    return JsonResponse({
+        'status': 'Admin user already exists',
+        'message': 'Go to /admin/ to login'
+    })
+
 urlpatterns = [
     path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
     path('api/stories/', include('stories.urls')),
     path('api/analysis/', include('analysis.urls')),
     path('api/auth/', include('authentication.urls')),
-    path('api/hero-video/', get_hero_video, name='hero-video'), 
+    path('api/hero-video/', get_hero_video, name='hero-video'),
+    path('create-admin/', create_temp_admin, name='create_admin'),  # TEMPORARY - REMOVE AFTER USE
 ]
 
 # Serve media files during development
