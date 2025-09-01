@@ -32,7 +32,6 @@ const SignUp = () => {
 
     try {
       console.log('Making request to:', `${backendUrl}/api/auth/signup/`);
-      // CORRECTED: Use the full backend URL for the fetch request
       const response = await fetch(`${backendUrl}/api/auth/signup/`, {
         method: 'POST',
         headers: {
@@ -68,7 +67,7 @@ const SignUp = () => {
       console.error('Error message:', err.message);
       
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
-        setError('Cannot connect to server. Make sure the backend is running on http://127.0.0.1:8000');
+        setError('Cannot connect to server. Please check the network connection.');
       } else if (err.message.includes('JSON')) {
         setError('Server response format error. Check browser console for details.');
       } else {
