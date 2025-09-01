@@ -17,7 +17,7 @@ ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1', 
     '0.0.0.0',
-    'beyond-words-backend.onrender.com',  # Your Render domain (update this)
+    'beyond-words-backend-um97.onrender.com',  # Your Render domain (update this)
     '.onrender.com',  # Allow all Render subdomains
 ]
 
