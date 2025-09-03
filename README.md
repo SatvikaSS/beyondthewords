@@ -65,7 +65,7 @@ Visit the live application: [https://beyond-words-frontend.onrender.com](https:/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/SatvikaS/beyondthewords.git
+   git clone https://github.com/SatvikaSS/beyondthewords.git
    cd beyondthewords
    ```
 
