@@ -1,6 +1,6 @@
-# Beyond Words
+# Beyond The Words
 
-A comprehensive story analysis platform built with React.js frontend and Django backend. Beyond Words provides advanced text analytics, content authentication, and intelligent story recommendations to help users analyze and discover stories.
+A comprehensive story analysis platform built with React.js frontend and Django backend. Beyond the Words provides advanced text analytics, content authentication, and intelligent story recommendations to help users analyze and discover stories.
 
 ## 🌐 Live Demo
 
