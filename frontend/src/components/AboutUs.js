@@ -4,9 +4,9 @@ import foundersImage from '../assets/images/founders.png';
 
 const AboutUs = ({ onBack, onHomeClick }) => {
   const stats = [
-    { icon: BookOpen, label: "Stories Analyzed", value: "7000+" },
-    { icon: Users, label: "Active Users", value: "20+" },
-    { icon: Award, label: "Accuracy Rate", value: "95%" },
+    { icon: BookOpen, label: "Stories Analyzed", value: "2000+" },
+    { icon: Users, label: "Active Users", value: "15+" },
+    { icon: Award, label: "Accuracy Rate", value: "85%" },
     { icon: Target, label: "Age Groups Covered", value: "3" }
   ];
 
