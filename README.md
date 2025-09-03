@@ -1,70 +1,223 @@
-# Getting Started with Create React App
+# Beyond Words
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive story analysis platform built with React.js frontend and Django backend. Beyond Words provides advanced text analytics, content authentication, and intelligent story recommendations to help users analyze and discover stories.
 
-## Available Scripts
+## 🌐 Live Demo
 
-In the project directory, you can run:
+Visit the live application: [https://beyond-words-frontend.onrender.com](https://beyond-words-frontend.onrender.com)
 
-### `npm start`
+## 🚀 Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Frontend
+- **React.js** - Modern JavaScript library for building user interfaces
+- **Create React App** - Bootstrapped for quick setup and development
+- **Tailwind CSS** - Utility-first CSS framework for styling
+- **PostCSS** - CSS post-processor for enhanced styling capabilities
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Backend
+- **Django** - High-level Python web framework
+- **Django REST Framework** - For building robust APIs
+- **Python** - Backend programming language
+- **Machine Learning Libraries** - Scikit-learn, NLTK, TextStat for text analysis
+- **Random Forest Classifier** - For AI vs Human content authentication
 
 ### Deployment
+- **Frontend**: Deployed on Render
+- **Backend**: Deployed on Render
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## ✨ Features
 
-### `npm run build` fails to minify
+### 🔍 Advanced Search Functionality
+- **Story Name Search** - Find stories by their titles
+- **Content-Based Search** - Search for stories containing specific words or phrases
+- **Intelligent Matching** - Advanced text matching algorithms for precise results
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 🎯 Smart Filtering
+- **Age Group Filtering** - Filter stories based on appropriate age demographics
+- **Category-Based Organization** - Organized story browsing experience
+
+### 📊 Comprehensive Story Analysis
+- **Text Statistics** - Total word count, sentence analysis
+- **Readability Metrics** - ARI (Automated Readability Index) and Flesch-Kincaid scores
+- **Sentiment Analysis** - Emotional tone and sentiment detection
+- **POS Tagging Distribution** - Part-of-speech analysis with interactive charts
+- **Visual Analytics** - Data visualization through charts and graphs
+
+### 🤖 AI Content Authentication
+- **Human vs AI Detection** - Machine learning-powered content verification
+- **Random Forest Classifier** - Advanced ML model for accurate prediction
+- **Content Authenticity Verification** - Ensures story originality and authorship
+
+### 🎭 Story Recommendations
+- **Similar Stories** - Intelligent recommendations based on content analysis
+- **Personalized Suggestions** - Stories tailored to user preferences
+- **Content-Based Filtering** - Advanced algorithms for story matching
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
+- Node.js (v14 or higher)
+- Python (v3.8 or higher)
+- pip (Python package manager)
+- Git
+
+### Frontend Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/SatvikaS/beyondthewords.git
+   cd beyondthewords
+   ```
+
+2. **Navigate to frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+3. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
+   
+   The app will open at [http://localhost:3000](http://localhost:3000)
+
+### Backend Setup
+
+1. **Navigate to backend directory**
+   ```bash
+   cd backend  # or your Django project directory
+   ```
+
+2. **Create virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run migrations**
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Start the Django server**
+   ```bash
+   python manage.py runserver
+   ```
+   
+   The API will be available at [http://localhost:8000](http://localhost:8000)
+
+## 📁 Project Structure
+
+```
+beyondthewords/
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── package.json
+│   ├── tailwind.config.js
+│   └── postcss.config.js
+├── backend/
+│   ├── analysis/          # Story analysis functionality
+│   ├── authentication/    # User authentication
+│   ├── beyond_words/      # Main Django project
+│   ├── stories/           # Story management
+│   ├── static/           # Static files
+│   ├── ai_stories.json   # AI-generated stories dataset
+│   ├── human_stories.json # Human-written stories dataset
+│   ├── manage.py
+│   ├── requirements.txt
+│   └── settings.py
+├── .gitattributes
+├── .gitignore
+└── README.md
+```
+
+## 🔧 Available Scripts
+
+### Frontend Scripts
+
+- `npm start` - Runs the app in development mode
+- `npm test` - Launches the test runner
+- `npm run build` - Builds the app for production
+- `npm run eject` - Ejects from Create React App (one-way operation)
+
+### Backend Scripts
+
+- `python manage.py runserver` - Start Django development server
+- `python manage.py migrate` - Run database migrations
+- `python manage.py createsuperuser` - Create admin user
+- `python manage.py collectstatic` - Collect static files for production
+
+## 🌍 Environment Variables
+
+Create a `.env` file in the root directory and add:
+
+```env
+# Frontend
+REACT_APP_API_BASE_URL=https://your-backend-url.onrender.com/api
+
+# Backend
+DEBUG=False
+SECRET_KEY=your-secret-key-here
+DATABASE_URL=your-database-url
+ALLOWED_HOSTS=your-backend-url.onrender.com,localhost,127.0.0.1
+```
+
+## 🚀 Deployment
+
+### Frontend (Render)
+1. Connect your GitHub repository to Render
+2. Set build command: `cd frontend && npm install && npm run build`
+3. Set publish directory: `frontend/build`
+4. Set environment variables in Render dashboard
+5. Deploy
+
+### Backend (Render)
+1. Create a new Web Service on Render
+2. Connect your GitHub repository
+3. Set build command: `cd backend && pip install -r requirements.txt`
+4. Set start command: `cd backend && python manage.py runserver 0.0.0.0:$PORT`
+5. Configure environment variables
+6. Deploy
+
+## 🤖 Machine Learning Features
+
+The application leverages several ML and NLP techniques:
+
+- **Random Forest Classifier** for AI vs Human content detection
+- **NLTK** for natural language processing and text analysis
+- **TextStat** for readability metrics calculation
+- **Sentiment Analysis** for emotional content evaluation
+- **POS Tagging** for grammatical analysis and visualization
+- **Content-Based Filtering** for story recommendation system
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 🙏 Acknowledgments
+
+- Create React App for the initial setup
+- Django and Django REST Framework communities
+- Scikit-learn for machine learning capabilities
+- NLTK team for natural language processing tools
+- TextStat library for readability analysis
+- Render for seamless deployment platform
