@@ -400,16 +400,17 @@ const ContactModal = ({ isOpen, onClose }) => {
 };
 
 // Component for the main homepage (after login)
-const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, onFilterChange, selectedAgeGroup, onProfileClick, backgroundLoading, loadingProgress, allStoriesLoaded,totalStories }) => {
+const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, onFilterChange, selectedAgeGroup, onProfileClick }) => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false); 
 
+  // Add these handler functions in your Homepage component
   const handleContactClick = () => {
     setShowContactModal(true);
   };
 
   const handleAboutClick = () => {
-    window.location.href = '/about';
+    window.location.href = '/about'; // Or use navigate('/about') if you pass navigate as prop
   };
   
   const categorizeStories = () => {
@@ -492,39 +493,7 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
         </nav>
       </header>
 
-      {/* Background Loading Progress Bar */}
-      {backgroundLoading && (
-        <div className="bg-gray-800 p-3 border-b border-gray-700">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-blue-400 text-sm">
-                Loading more stories in background... {loadingProgress.toFixed(0)}% complete
-              </span>
-            </div>
-            <span className="text-gray-400 text-sm">
-              {totalStories} stories available
-            </span>
-          </div>
-          <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-            <div 
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${loadingProgress}%` }}
-            ></div>
-          </div>
-        </div>
-      )}
-
-      {/* All Stories Loaded Indicator */}
-      {allStoriesLoaded && !backgroundLoading && (
-        <div className="bg-green-900/20 border-b border-green-600/30 p-2 text-center">
-          <span className="text-green-400 text-sm">
-            ✅ All {totalStories} stories loaded! Search and filtering now work across the complete library.
-          </span>
-        </div>
-      )}
-
-      {/* Video Banner */}
+      {/* Simple Video Banner */}
       <div className="relative h-96 overflow-hidden border-b-4 border-red-500 flex items-end p-16 bg-gray-800">
         <video 
           autoPlay 
@@ -538,15 +507,19 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
           Your browser does not support the video tag.
         </video>
         
+        {/* Fallback background */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900 to-blue-900 -z-10"></div>
+        
+        {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         
+        {/* Text content */}
         <h2 className="relative z-10 text-4xl font-bold bg-black bg-opacity-60 px-6 py-3 rounded-lg">
           Discover Stories: Beyond The Words
         </h2>
       </div>
 
-      {/* Search Results Info with Loading Status */}
+      {/* Search Results Info */}
       {searchTerm && (
         <div className="p-8 pb-4">
           <p className="text-gray-400">
@@ -554,16 +527,6 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
               ? `Found ${stories.length} story(ies) matching "${searchTerm}"`
               : `No stories found for "${searchTerm}"`
             }
-            {backgroundLoading && (
-              <span className="text-blue-400 ml-2">
-                (searching in {totalStories} stories, {loadingProgress.toFixed(0)}% loaded)
-              </span>
-            )}
-            {!allStoriesLoaded && !backgroundLoading && totalStories > stories.length && (
-              <span className="text-yellow-400 ml-2">
-                (search limited to {totalStories} currently loaded stories)
-              </span>
-            )}
           </p>
         </div>
       )}
@@ -572,12 +535,7 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
       {selectedAgeGroup && (
         <div className="p-8 pb-4 pt-0">
           <p className="text-gray-400">
-            Showing stories for the {selectedAgeGroup} age group.
-            {backgroundLoading && (
-              <span className="text-blue-400 ml-2">
-                (filtering {totalStories} stories, {loadingProgress.toFixed(0)}% loaded)
-              </span>
-            )}
+            Showing stories for the **{selectedAgeGroup}** age group.
           </p>
         </div>
       )}
@@ -623,15 +581,17 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
         )}
       </div>
 
-      {/* Footer */}
       <footer className="bg-gray-800 border-t border-gray-700 p-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center">
+            {/* Left side - Main content */}
             <div className="flex-1 text-center">
+              {/* Copyright */}
               <div className="text-red-500 mb-4">
                 © 2025 Beyond the Words. All rights reserved.
               </div>
               
+              {/* Navigation Links */}
               <div className="flex justify-center space-x-6 mb-4">
                 <button
                   onClick={handleContactClick}
@@ -647,11 +607,13 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
                 </button>
               </div>
               
+              {/* Tagline */}
               <div className="text-gray-500 text-sm">
                 Discover Stories Beyond The Words
               </div>
             </div>
 
+            {/* Right side - QR Code */}
             <div className="flex flex-col items-center ml-8">
               <img 
                 src={qrCodeImage}
@@ -662,7 +624,9 @@ const Homepage = ({ stories, onStoryClick, onSearch, searchTerm, onHomeClick, on
           </div>
         </div>
       </footer>
+       
 
+      {/* Contact Modal */}
       <ContactModal 
         isOpen={showContactModal} 
         onClose={() => setShowContactModal(false)} 
@@ -915,6 +879,7 @@ const AuthorshipView = ({ story, authorshipResult, onBack }) => {
 };
 
 // Story Management Component (the main stories page)
+// Story Management Component (the main stories page)
 const StoryApp = () => {
   const [stories, setStories] = useState([]);
   const [filteredStories, setFilteredStories] = useState([]);
@@ -926,222 +891,92 @@ const StoryApp = () => {
   const [authorshipResult, setAuthorshipResult] = useState(null);
   const [similarStories, setSimilarStories] = useState([]);
   const [loading, setLoading] = useState(false);
-  // Background loading state
-  const [allStoriesLoaded, setAllStoriesLoaded] = useState(false);
-  const [backgroundLoading, setBackgroundLoading] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalStories, setTotalStories] = useState(0);
 
-  // PHASE 1: Load first page immediately for fast UI
+  // Load all stories from API with pagination
   useEffect(() => {
-    const loadFirstPage = async () => {
+    const fetchAllStories = async () => {
       setLoading(true);
+      const allStories = [];
+      let nextUrl = '/stories/';
+
       try {
-        console.log('🚀 Loading first page for immediate display...');
-        const response = await apiCall('/stories/');
-        
-        if (response && response.results) {
-          console.log(`✅ First page loaded: ${response.results.length} stories`);
-          setStories(response.results);
-          setFilteredStories(response.results);
-          
-          // Calculate total pages for background loading
-          const total = response.count || 2676;
-          const perPage = response.results.length || 20;
-          const pages = Math.ceil(total / perPage);
-          setTotalPages(pages);
-          setTotalStories(total);
-          
-          console.log(`📊 Total pages to load: ${pages}, Total stories: ${total}`);
-          
-          // Start background loading immediately after first page
-          if (pages > 1) {
-            setTimeout(() => startBackgroundLoading(response.results, pages, total), 500);
+        // Keep fetching pages until there are no more
+        while (nextUrl) {
+          const response = await apiCall(nextUrl);
+
+          // Check if response has a 'results' array and a 'next' link
+          if (response && response.results) {
+            allStories.push(...response.results);
+            nextUrl = response.next ? response.next.replace(API_BASE_URL, '') : null;
           } else {
-            setAllStoriesLoaded(true);
+            console.error('API did not return a valid paginated response:', response);
+            nextUrl = null; // Stop the loop on error
           }
+        }
+
+        if (allStories.length > 0) {
+          console.log(`✅ Successfully loaded ${allStories.length} stories from API`);
+          setStories(allStories);
         } else {
-          console.log('❌ API failed, using mock stories');
+          console.log('⚠️ API returned no stories, using mock data');
           setStories(mockStories);
-          setFilteredStories(mockStories);
-          setAllStoriesLoaded(true);
         }
       } catch (error) {
-        console.error('❌ Error loading first page:', error);
-        setStories(mockStories);
-        setFilteredStories(mockStories);
-        setAllStoriesLoaded(true);
+        console.error('❌ Error fetching stories:', error);
+        setStories(mockStories); // Fallback to mock data on network error
       } finally {
         setLoading(false);
+        console.log('Stories loading completed');
       }
     };
 
-    loadFirstPage();
+    fetchAllStories();
   }, []);
 
-  // PHASE 2: Background loading of remaining pages
-  const startBackgroundLoading = async (initialStories, totalPages, totalCount) => {
-    if (allStoriesLoaded || backgroundLoading) return;
-    
-    setBackgroundLoading(true);
-    console.log(`🔄 Starting background loading of ${totalPages - 1} remaining pages...`);
-    
-    try {
-      let allStoryData = [...initialStories]; // Start with first page
-      let currentPage = 2; // Start from page 2
-      
-      while (currentPage <= totalPages && backgroundLoading) {
-        // Load pages in smaller batches to avoid overwhelming the server
-        const batchSize = Math.min(3, totalPages - currentPage + 1);
-        const batchPromises = [];
-        
-        console.log(`📦 Loading batch: pages ${currentPage} to ${currentPage + batchSize - 1}`);
-        
-        for (let i = 0; i < batchSize; i++) {
-          const pageNum = currentPage + i;
-          if (pageNum <= totalPages) {
-            batchPromises.push(
-              apiCall(`/stories/?page=${pageNum}`)
-                .then(response => ({ page: pageNum, data: response }))
-                .catch(error => {
-                  console.error(`❌ Failed to load page ${pageNum}:`, error);
-                  return { page: pageNum, data: null };
-                })
-            );
-          }
-        }
-        
-        try {
-          // Load batch of pages simultaneously
-          const batchResults = await Promise.all(batchPromises);
-          
-          // Add results from this batch
-          let newStoriesCount = 0;
-          batchResults.forEach(result => {
-            if (result.data && result.data.results && Array.isArray(result.data.results)) {
-              allStoryData = [...allStoryData, ...result.data.results];
-              newStoriesCount += result.data.results.length;
-              console.log(`✅ Added page ${result.page}: ${result.data.results.length} stories`);
-            }
-          });
-          
-          // Update progress
-          const progress = Math.min(((currentPage + batchSize - 2) / (totalPages - 1)) * 100, 100);
-          setLoadingProgress(progress);
-          
-          console.log(`📊 Progress: ${progress.toFixed(1)}% - Total stories loaded: ${allStoryData.length}`);
-          
-          // Update stories state - CRITICAL: Update both stories and filtered stories
-          setStories([...allStoryData]);
-          
-          // Re-apply current filters to include new stories
-          let newFilteredStories = [...allStoryData];
-          if (searchTerm) {
-            newFilteredStories = newFilteredStories.filter(story =>
-              story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              story.story.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              story.age_group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              story.source.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-          }
-          if (selectedAgeGroup) {
-            newFilteredStories = newFilteredStories.filter(story => story.age_group === selectedAgeGroup);
-          }
-          setFilteredStories(newFilteredStories);
-          
-          currentPage += batchSize;
-          
-          // Small delay between batches
-          if (currentPage <= totalPages) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
-          
-        } catch (batchError) {
-          console.error(`❌ Batch loading error:`, batchError);
-          currentPage += batchSize; // Continue with next batch
-        }
-      }
-      
-      setAllStoriesLoaded(true);
-      setBackgroundLoading(false);
-      setLoadingProgress(100);
-      console.log(`🎉 Background loading complete! Total stories loaded: ${allStoryData.length}`);
-      
-    } catch (error) {
-      console.error('❌ Background loading failed:', error);
-      setBackgroundLoading(false);
-      setLoadingProgress(0);
-    }
-  };
+  // This effect handles filtering logic when stories, search term, or age group changes.
+  useEffect(() => {
+    let newFilteredStories = [...stories];
 
-  // Enhanced search that works on all loaded stories
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-    
-    if (!term.trim()) {
-      // Reset to all loaded stories
-      if (selectedAgeGroup) {
-        const filtered = stories.filter(story => story.age_group === selectedAgeGroup);
-        setFilteredStories(filtered);
-      } else {
-        setFilteredStories([...stories]); // Create new array reference
-      }
-      return;
-    }
-
-    // Search in currently loaded stories
-    let searchResults = stories.filter(story =>
-      story.title.toLowerCase().includes(term.toLowerCase()) ||
-      story.story.toLowerCase().includes(term.toLowerCase()) ||
-      story.age_group.toLowerCase().includes(term.toLowerCase()) ||
-      story.source.toLowerCase().includes(term.toLowerCase())
-    );
-
-    // Apply age group filter if active
-    if (selectedAgeGroup) {
-      searchResults = searchResults.filter(story => story.age_group === selectedAgeGroup);
-    }
-
-    setFilteredStories(searchResults);
-    
-    console.log(`🔍 Search "${term}" found ${searchResults.length} results in ${stories.length} loaded stories`);
-  };
-
-  const handleFilterChange = (ageGroup) => {
-    setSelectedAgeGroup(ageGroup);
-    
-    let filtered = [...stories]; // Start with all loaded stories
-    
     // Apply search filter first
     if (searchTerm) {
-      filtered = filtered.filter(story =>
+      newFilteredStories = newFilteredStories.filter(story =>
         story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         story.story.toLowerCase().includes(searchTerm.toLowerCase()) ||
         story.age_group.toLowerCase().includes(searchTerm.toLowerCase()) ||
         story.source.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
-    // Apply age group filter
-    if (ageGroup) {
-      filtered = filtered.filter(story => story.age_group === ageGroup);
+
+    // Apply age group filter second
+    if (selectedAgeGroup) {
+      newFilteredStories = newFilteredStories.filter(story => story.age_group === selectedAgeGroup);
     }
-    
-    setFilteredStories(filtered);
-    console.log(`🎯 Filter applied: ${filtered.length} stories match criteria`);
+
+    setFilteredStories(newFilteredStories);
+
+  }, [stories, searchTerm, selectedAgeGroup]);
+
+  // Search functionality
+  const handleSearch = (term) => {
+    setSearchTerm(term);
   };
 
-  // Rest of your handlers remain the same...
+  const handleFilterChange = (ageGroup) => {
+    setSelectedAgeGroup(ageGroup);
+  };
+
+  // Handle story selection
   const handleStoryClick = async (story) => {
     setSelectedStory(story);
     setCurrentView('story');
 
+    // Get similar stories
     try {
       const similar = await apiCall(`/stories/${story.id}/similar/`);
       if (similar && Array.isArray(similar)) {
         setSimilarStories(similar);
       } else {
+        // Mock similar stories if API fails
         const mockSimilar = stories.filter(s =>
           s.id !== story.id && s.age_group === story.age_group
         ).slice(0, 3);
@@ -1152,7 +987,7 @@ const StoryApp = () => {
       setSimilarStories([]);
     }
   };
-  
+
   const handleHomeClick = () => {
     setCurrentView('homepage');
     setSelectedStory(null);
@@ -1255,10 +1090,10 @@ const StoryApp = () => {
 
   // Render current view
   const renderCurrentView = () => {
-    if (loading && stories.length === 0) {
+    if (loading) {
       return (
         <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-          <div className="text-white text-xl">Loading stories...</div>
+          <div className="text-white text-xl">Loading...</div>
         </div>
       );
     }
@@ -1275,11 +1110,6 @@ const StoryApp = () => {
             onFilterChange={handleFilterChange}
             selectedAgeGroup={selectedAgeGroup}
             onProfileClick={handleProfileClick}
-            // Background loading status
-            backgroundLoading={backgroundLoading}
-            loadingProgress={loadingProgress}
-            allStoriesLoaded={allStoriesLoaded}
-            totalStories={stories.length}
           />
         );
       case 'profile':
