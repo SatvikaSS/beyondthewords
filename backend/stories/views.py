@@ -14,7 +14,7 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     API endpoint for viewing stories.
     Provides list and detail views with filtering capabilities.
     """
-    queryset = Story.objects.all()
+    # REMOVED: queryset = Story.objects.all()  <- This was causing the slow loading
     serializer_class = StorySerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'story']
@@ -23,9 +23,12 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally filter the queryset by age_group and source
+        Optimized queryset - don't load all stories at once
         """
-        queryset = Story.objects.all()
+        # START with an efficient base query
+        queryset = Story.objects.select_related().order_by('-created_at')
+        
+        # Apply filters at database level
         age_group = self.request.query_params.get('age_group', None)
         source = self.request.query_params.get('source', None)
         
@@ -41,7 +44,14 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
         """Get stories filtered by age group"""
         age_group = request.query_params.get('age_group')
         if age_group:
-            stories = self.queryset.filter(age_group=age_group)
+            stories = self.get_queryset().filter(age_group=age_group)
+            
+            # Use pagination for this endpoint too
+            page = self.paginate_queryset(stories)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            
             serializer = self.get_serializer(stories, many=True)
             return Response(serializer.data)
         return Response({'error': 'age_group parameter required'}, status=400)
@@ -56,14 +66,22 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=False, methods=['get'])
     def search(self, request):
-        """Search stories by title or content"""
+        """Search stories by title or content - OPTIMIZED"""
         query = request.query_params.get('q', '')
+        
         if not query.strip():
-            stories = Story.objects.all()
+            # Don't load ALL stories, let pagination handle it
+            stories = self.get_queryset()
         else:
             stories = Story.objects.filter(
                 Q(title__icontains=query) | Q(story__icontains=query)
-            )
+            ).order_by('-created_at')
+        
+        # Use pagination for search results too
+        page = self.paginate_queryset(stories)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         
         serializer = self.get_serializer(stories, many=True)
         return Response(serializer.data)
@@ -226,59 +244,3 @@ class StoryViewSet(viewsets.ReadOnlyModelViewSet):
             
         except Exception as e:
             return Response({'error': str(e)}, status=500)
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def load_stories_data(request):
-    """
-    Temporary endpoint to load initial story data from JSON files.
-    This view should be removed after the data is loaded.
-    """
-    # Base directory is the backend folder itself
-    BASE_DIR = Path(__file__).resolve().parent.parent
-    
-    # Paths to your JSON files, now correctly pointing to the backend directory.
-    json_files_to_load = [
-        ('ai_stories.json', 'AI'),
-        ('human_stories.json', 'Human')
-    ]
-
-    try:
-        loaded_count = 0
-        # Load stories from both JSON files
-        for filename, source_name in json_files_to_load:
-            json_file_path = os.path.join(BASE_DIR, filename)
-            if not os.path.exists(json_file_path):
-                continue
-                
-            with open(json_file_path, 'r', encoding='utf-8') as file:
-                stories_data = json.load(file)
-
-            for story_data in stories_data:
-                story, created = Story.objects.get_or_create(
-                    title=story_data.get('title'),
-                    defaults={
-                        # Corrected: Use 'story' to match your models.py
-                        'story': story_data.get('story'),
-                        'age_group': story_data.get('age_group'),
-                        'source': source_name,
-                        'safety_violations': story_data.get('safety_violations', {}),
-                        'stereotypes_biases': story_data.get('stereotypes_biases', {})
-                    }
-                )
-                if created:
-                    loaded_count += 1
-
-        return Response({
-            "status": "success", 
-            "message": f"Loaded {loaded_count} new stories successfully!",
-            "total_stories": Story.objects.count()
-        })
-        
-
-    except FileNotFoundError:
-        return Response({"status": "error", "message": "JSON files not found. Please ensure they are in the correct directory."}, status=404)
-    except json.JSONDecodeError:
-        return Response({"status": "error", "message": "Error decoding JSON file. Check file format."}, status=500)
-    except Exception as e:
-        return Response({"status": "error", "message": str(e)}, status=500)
