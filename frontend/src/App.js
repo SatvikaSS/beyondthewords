@@ -915,7 +915,6 @@ const AuthorshipView = ({ story, authorshipResult, onBack }) => {
 };
 
 // Story Management Component (the main stories page)
-// Story Management Component (the main stories page)
 const StoryApp = () => {
   const [stories, setStories] = useState([]);
   const [filteredStories, setFilteredStories] = useState([]);
@@ -927,11 +926,13 @@ const StoryApp = () => {
   const [authorshipResult, setAuthorshipResult] = useState(null);
   const [similarStories, setSimilarStories] = useState([]);
   const [loading, setLoading] = useState(false);
-  // NEW: Background loading state
+  // Background loading state
   const [allStoriesLoaded, setAllStoriesLoaded] = useState(false);
   const [backgroundLoading, setBackgroundLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalStories, setTotalStories] = useState(0);
+
   // PHASE 1: Load first page immediately for fast UI
   useEffect(() => {
     const loadFirstPage = async () => {
@@ -950,20 +951,29 @@ const StoryApp = () => {
           const perPage = response.results.length || 20;
           const pages = Math.ceil(total / perPage);
           setTotalPages(pages);
+          setTotalStories(total);
           
-          console.log(`📊 Total pages to load: ${pages}`);
+          console.log(`📊 Total pages to load: ${pages}, Total stories: ${total}`);
+          
+          // Start background loading immediately after first page
+          if (pages > 1) {
+            setTimeout(() => startBackgroundLoading(response.results, pages, total), 500);
+          } else {
+            setAllStoriesLoaded(true);
+          }
         } else {
+          console.log('❌ API failed, using mock stories');
           setStories(mockStories);
           setFilteredStories(mockStories);
+          setAllStoriesLoaded(true);
         }
       } catch (error) {
         console.error('❌ Error loading first page:', error);
         setStories(mockStories);
         setFilteredStories(mockStories);
+        setAllStoriesLoaded(true);
       } finally {
         setLoading(false);
-        // Start background loading after first page is displayed
-        setTimeout(() => startBackgroundLoading(), 1000); // 1 second delay
       }
     };
 
@@ -971,20 +981,22 @@ const StoryApp = () => {
   }, []);
 
   // PHASE 2: Background loading of remaining pages
-  const startBackgroundLoading = async () => {
+  const startBackgroundLoading = async (initialStories, totalPages, totalCount) => {
     if (allStoriesLoaded || backgroundLoading) return;
     
     setBackgroundLoading(true);
-    console.log('🔄 Starting background loading of all stories...');
+    console.log(`🔄 Starting background loading of ${totalPages - 1} remaining pages...`);
     
     try {
-      let allStoryData = [...stories]; // Start with first page
+      let allStoryData = [...initialStories]; // Start with first page
       let currentPage = 2; // Start from page 2
       
-      while (currentPage <= totalPages) {
-        // Load pages in batches of 5 with small delays
+      while (currentPage <= totalPages && backgroundLoading) {
+        // Load pages in smaller batches to avoid overwhelming the server
+        const batchSize = Math.min(3, totalPages - currentPage + 1);
         const batchPromises = [];
-        const batchSize = Math.min(5, totalPages - currentPage + 1);
+        
+        console.log(`📦 Loading batch: pages ${currentPage} to ${currentPage + batchSize - 1}`);
         
         for (let i = 0; i < batchSize; i++) {
           const pageNum = currentPage + i;
@@ -992,49 +1004,78 @@ const StoryApp = () => {
             batchPromises.push(
               apiCall(`/stories/?page=${pageNum}`)
                 .then(response => ({ page: pageNum, data: response }))
+                .catch(error => {
+                  console.error(`❌ Failed to load page ${pageNum}:`, error);
+                  return { page: pageNum, data: null };
+                })
             );
           }
         }
         
-        // Load batch of 5 pages simultaneously
-        const batchResults = await Promise.all(batchPromises);
-        
-        // Add results from this batch
-        batchResults.forEach(result => {
-          if (result.data && result.data.results) {
-            allStoryData.push(...result.data.results);
-            console.log(`📖 Loaded page ${result.page} (${result.data.results.length} stories)`);
+        try {
+          // Load batch of pages simultaneously
+          const batchResults = await Promise.all(batchPromises);
+          
+          // Add results from this batch
+          let newStoriesCount = 0;
+          batchResults.forEach(result => {
+            if (result.data && result.data.results && Array.isArray(result.data.results)) {
+              allStoryData = [...allStoryData, ...result.data.results];
+              newStoriesCount += result.data.results.length;
+              console.log(`✅ Added page ${result.page}: ${result.data.results.length} stories`);
+            }
+          });
+          
+          // Update progress
+          const progress = Math.min(((currentPage + batchSize - 2) / (totalPages - 1)) * 100, 100);
+          setLoadingProgress(progress);
+          
+          console.log(`📊 Progress: ${progress.toFixed(1)}% - Total stories loaded: ${allStoryData.length}`);
+          
+          // Update stories state - CRITICAL: Update both stories and filtered stories
+          setStories([...allStoryData]);
+          
+          // Re-apply current filters to include new stories
+          let newFilteredStories = [...allStoryData];
+          if (searchTerm) {
+            newFilteredStories = newFilteredStories.filter(story =>
+              story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              story.story.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              story.age_group.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              story.source.toLowerCase().includes(searchTerm.toLowerCase())
+            );
           }
-        });
-        
-        // Update progress
-        currentPage += batchSize;
-        const progress = Math.min((currentPage - 1) / totalPages * 100, 100);
-        setLoadingProgress(progress);
-        
-        // Update stories in batches for smooth UI
-        setStories([...allStoryData]);
-        if (!searchTerm && !selectedAgeGroup) {
-          setFilteredStories([...allStoryData]);
-        }
-        
-        // Small delay between batches to not overwhelm server
-        if (currentPage <= totalPages) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          if (selectedAgeGroup) {
+            newFilteredStories = newFilteredStories.filter(story => story.age_group === selectedAgeGroup);
+          }
+          setFilteredStories(newFilteredStories);
+          
+          currentPage += batchSize;
+          
+          // Small delay between batches
+          if (currentPage <= totalPages) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+          
+        } catch (batchError) {
+          console.error(`❌ Batch loading error:`, batchError);
+          currentPage += batchSize; // Continue with next batch
         }
       }
       
       setAllStoriesLoaded(true);
       setBackgroundLoading(false);
-      console.log(`✅ Background loading complete! Total stories: ${allStoryData.length}`);
+      setLoadingProgress(100);
+      console.log(`🎉 Background loading complete! Total stories loaded: ${allStoryData.length}`);
       
     } catch (error) {
       console.error('❌ Background loading failed:', error);
       setBackgroundLoading(false);
+      setLoadingProgress(0);
     }
   };
 
-  // Enhanced search that works immediately on loaded stories
+  // Enhanced search that works on all loaded stories
   const handleSearch = (term) => {
     setSearchTerm(term);
     
@@ -1044,7 +1085,7 @@ const StoryApp = () => {
         const filtered = stories.filter(story => story.age_group === selectedAgeGroup);
         setFilteredStories(filtered);
       } else {
-        setFilteredStories(stories);
+        setFilteredStories([...stories]); // Create new array reference
       }
       return;
     }
@@ -1064,16 +1105,13 @@ const StoryApp = () => {
 
     setFilteredStories(searchResults);
     
-    // Show loading status if not all stories loaded yet
-    if (!allStoriesLoaded && backgroundLoading) {
-      console.log(`🔍 Searching in ${stories.length} loaded stories (${loadingProgress.toFixed(1)}% complete)`);
-    }
+    console.log(`🔍 Search "${term}" found ${searchResults.length} results in ${stories.length} loaded stories`);
   };
 
   const handleFilterChange = (ageGroup) => {
     setSelectedAgeGroup(ageGroup);
     
-    let filtered = stories;
+    let filtered = [...stories]; // Start with all loaded stories
     
     // Apply search filter first
     if (searchTerm) {
@@ -1091,9 +1129,10 @@ const StoryApp = () => {
     }
     
     setFilteredStories(filtered);
+    console.log(`🎯 Filter applied: ${filtered.length} stories match criteria`);
   };
 
-  // Rest of your existing handlers remain the same...
+  // Rest of your handlers remain the same...
   const handleStoryClick = async (story) => {
     setSelectedStory(story);
     setCurrentView('story');
@@ -1113,7 +1152,7 @@ const StoryApp = () => {
       setSimilarStories([]);
     }
   };
-
+  
   const handleHomeClick = () => {
     setCurrentView('homepage');
     setSelectedStory(null);
