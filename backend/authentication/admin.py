@@ -52,7 +52,7 @@ class CustomUserAdmin(BaseUserAdmin):
 
 # API Views (This is fine, but it is better to have these in views.py)
 def is_super_admin(user):
-    return user.is_authenticated and user.is_superadmin
+    return user.is_authenticated and user.is_superuser
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -140,7 +140,7 @@ def admin_delete_user(request, user_id):
     try:
         user = CustomUser.objects.get(id=user_id)
         
-        if user.is_superadmin:
+        if user.is_superuser:
             return Response({
                 'message': 'Cannot delete super admin users.'
             }, status=status.HTTP_400_BAD_REQUEST)
@@ -187,7 +187,7 @@ def admin_stats(request):
     
     active_users = CustomUser.objects.filter(is_active=True).count()
     inactive_users = CustomUser.objects.filter(is_active=False).count()
-    super_admins = CustomUser.objects.filter(is_superadmin=True).count()
+    super_admins = CustomUser.objects.filter(is_superuser=True).count()
     
     stats = {
         'totalUsers': total_users,
@@ -221,7 +221,7 @@ def debug_users_table(request):
             'username': user.username,
             'email': user.email,
             'is_active': user.is_active,
-            'is_superadmin': user.is_superadmin,
+            'is_superuser': user.is_superuser,
             'password_hash': user.password[:50] + "..." if user.password else None,
             'created_at': user.created_at,
             'last_login': user.last_login
